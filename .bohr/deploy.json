@@ -1,0 +1,6 @@
+{
+  "directory": ".",
+  "node": "24",
+  "packageManager": "npm",
+  "install": "npm ci"
+}

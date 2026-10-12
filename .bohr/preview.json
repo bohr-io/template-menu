@@ -1,0 +1,5 @@
+{
+  "install": "npm ci",
+  "command": "npx wrangler d1 migrations apply DB --local && npx wrangler dev --ip 0.0.0.0 --port 8080",
+  "port": 8080
+}

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; object-src 'none'; base-uri 'none'; form-action 'self'" />
+    <title data-i18n="admin.brand">Cardápio</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/base.css" />
+    <link rel="stylesheet" href="/assets/app.css" />
+    <script type="module" src="/assets/admin.js"></script>
+  </head>
+  <body>
+    <main id="setup" class="login" hidden>
+      <div class="card stack">
+        <h1 data-i18n="admin.setupTitle"></h1>
+        <p data-i18n="admin.setupText"></p>
+        <ul class="setup-steps">
+          <li data-i18n="admin.setupBohr"></li>
+          <li data-i18n="admin.setupWrangler"></li>
+          <li data-i18n="admin.setupLocal"></li>
+        </ul>
+      </div>
+    </main>
+
+    <main id="login" class="login" hidden>
+      <form id="login-form" class="card stack">
+        <h1 data-i18n="admin.loginTitle"></h1>
+        <p class="muted" data-i18n="admin.loginText"></p>
+        <input type="text" name="username" value="admin" autocomplete="username" hidden />
+        <label class="field">
+          <span data-i18n="admin.password"></span>
+          <input type="password" name="password" autocomplete="current-password" required maxlength="256" />
+        </label>
+        <p id="login-error" class="alert error" role="alert" hidden></p>
+        <button class="btn primary block" type="submit" data-i18n="admin.login"></button>
+      </form>
+    </main>
+
+    <div id="admin" hidden>
+      <header class="admin-header">
+        <div class="container">
+          <span class="brand" data-i18n="admin.brand"></span>
+          <nav class="tabs" role="tablist">
+            <button type="button" role="tab" id="tab-orders" aria-controls="panel-orders" aria-selected="true" data-i18n="tab.orders"></button>
+            <button type="button" role="tab" id="tab-menu" aria-controls="panel-menu" aria-selected="false" data-i18n="tab.menu"></button>
+            <button type="button" role="tab" id="tab-settings" aria-controls="panel-settings" aria-selected="false" data-i18n="tab.settings"></button>
+          </nav>
+          <a class="btn ghost small" href="/" target="_blank" rel="noopener" data-i18n="admin.viewSite"></a>
+          <button id="logout" class="btn small" type="button" data-i18n="admin.logout"></button>
+        </div>
+      </header>
+
+      <main class="container admin-main stack">
+        <div id="whatsapp-banner" class="alert warning admin-banner" role="status" hidden>
+          <span data-i18n="admin.whatsappMissing"></span>
+          <button id="whatsapp-go" class="btn small" type="button" data-i18n="admin.whatsappGo"></button>
+        </div>
+
+        <section id="panel-orders" role="tabpanel" aria-labelledby="tab-orders" class="stack">
+          <div class="stats">
+            <div class="stat"><span class="muted small" data-i18n="stats.today"></span><strong id="stat-today">–</strong></div>
+            <div class="stat"><span class="muted small" data-i18n="stats.revenue"></span><strong id="stat-revenue">–</strong></div>
+            <div class="stat"><span class="muted small" data-i18n="stats.pending"></span><strong id="stat-pending">–</strong></div>
+          </div>
+          <div class="toolbar">
+            <div id="status-filter" class="segmented" role="group" data-i18n-label="orders.filter">
+              <button type="button" data-status="" aria-pressed="true" data-i18n="orders.all"></button>
+              <button type="button" data-status="new" aria-pressed="false" data-i18n="status.new"></button>
+              <button type="button" data-status="done" aria-pressed="false" data-i18n="status.done"></button>
+              <button type="button" data-status="cancelled" aria-pressed="false" data-i18n="status.cancelled"></button>
+            </div>
+            <a class="btn" href="/api/admin/orders.csv" download data-i18n="orders.export"></a>
+            <span class="muted small" data-i18n="orders.autoRefresh"></span>
+          </div>
+          <div id="orders" class="order-list"></div>
+          <p id="orders-empty" class="empty" hidden></p>
+          <div class="pager">
+            <button id="prev" class="btn small" type="button" data-i18n="common.previous"></button>
+            <span id="page-info" class="muted small"></span>
+            <button id="next" class="btn small" type="button" data-i18n="common.next"></button>
+          </div>
+        </section>
+
+        <section id="panel-menu" role="tabpanel" aria-labelledby="tab-menu" class="stack" hidden>
+          <div class="toolbar">
+            <button id="add-category" class="btn primary" type="button" data-i18n="menuAdmin.addCategory"></button>
+          </div>
+          <div id="menu-admin" class="menu-admin"></div>
+          <p id="menu-admin-empty" class="empty" hidden data-i18n="menuAdmin.noCategories"></p>
+        </section>
+
+        <section id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+          <form id="settings" class="card stack narrow" novalidate>
+            <div class="stack">
+              <p class="muted small" data-i18n="settings.hint"></p>
+              <label class="field">
+                <span data-i18n="settings.storeName"></span>
+                <input name="store_name" maxlength="80" />
+              </label>
+              <label class="field">
+                <span data-i18n="settings.storeDescription"></span>
+                <textarea name="store_description" maxlength="300" rows="3"></textarea>
+              </label>
+              <label class="field" id="field-whatsapp">
+                <span data-i18n="settings.whatsapp"></span>
+                <input name="whatsapp" type="tel" inputmode="tel" maxlength="30" autocomplete="off" aria-describedby="whatsapp-hint" />
+                <span id="whatsapp-hint" class="hint" data-i18n="settings.whatsappHint"></span>
+              </label>
+              <label class="field">
+                <span data-i18n="settings.currency"></span>
+                <select name="currency" class="money-input"></select>
+              </label>
+            </div>
+            <fieldset class="stack settings-section">
+              <legend data-i18n="settings.ordering"></legend>
+              <label class="check"><input type="checkbox" name="open" /> <span data-i18n="settings.open"></span></label>
+              <label class="check"><input type="checkbox" name="delivery_enabled" /> <span data-i18n="settings.deliveryEnabled"></span></label>
+              <label class="field">
+                <span data-i18n="settings.deliveryFee"></span>
+                <input name="delivery_fee" class="money-input" inputmode="decimal" maxlength="12" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span data-i18n="settings.minOrder"></span>
+                <input name="min_order" class="money-input" inputmode="decimal" maxlength="12" autocomplete="off" />
+              </label>
+            </fieldset>
+            <p id="settings-error" class="alert error" role="alert" hidden></p>
+            <button class="btn primary" type="submit" data-i18n="common.save"></button>
+          </form>
+        </section>
+      </main>
+
+      <dialog id="category-dialog" aria-labelledby="category-dialog-title">
+        <form id="category-form" class="stack" novalidate>
+          <h2 id="category-dialog-title"></h2>
+          <label class="field">
+            <span data-i18n="categoryForm.name"></span>
+            <input name="name" required maxlength="60" />
+          </label>
+          <label class="check"><input type="checkbox" name="visible" /> <span data-i18n="categoryForm.visible"></span></label>
+          <p id="category-error" class="alert error" role="alert" hidden></p>
+          <div class="dialog-actions">
+            <button class="btn" type="button" data-close data-i18n="dialog.cancel"></button>
+            <button class="btn primary" type="submit" data-i18n="common.save"></button>
+          </div>
+        </form>
+      </dialog>
+
+      <dialog id="item-dialog" aria-labelledby="item-dialog-title">
+        <form id="item-form" class="stack" novalidate>
+          <h2 id="item-dialog-title"></h2>
+          <label class="field">
+            <span data-i18n="itemForm.category"></span>
+            <select name="category_id" required></select>
+          </label>
+          <label class="field">
+            <span data-i18n="itemForm.name"></span>
+            <input name="name" required maxlength="100" />
+          </label>
+          <label class="field">
+            <span data-i18n="itemForm.description"></span>
+            <textarea name="description" maxlength="500" rows="3"></textarea>
+          </label>
+          <label class="field">
+            <span><span data-i18n="itemForm.price"></span> (<span id="price-currency"></span>)</span>
+            <input name="price" class="money-input" required inputmode="decimal" maxlength="12" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span data-i18n="itemForm.photo"></span>
+            <input name="photo_url" type="url" maxlength="2048" placeholder="https://" aria-describedby="photo-hint" />
+            <span id="photo-hint" class="hint" data-i18n="itemForm.photoHint"></span>
+          </label>
+          <img id="photo-preview" class="photo-preview" alt="" hidden />
+          <label class="check"><input type="checkbox" name="available" /> <span data-i18n="itemForm.available"></span></label>
+          <p id="item-error" class="alert error" role="alert" hidden></p>
+          <div class="dialog-actions">
+            <button class="btn" type="button" data-close data-i18n="dialog.cancel"></button>
+            <button class="btn primary" type="submit" data-i18n="common.save"></button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+  </body>
+</html>

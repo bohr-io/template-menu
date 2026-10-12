@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.bohr-gate.mjs
+wrangler.bohr-gate.json
+*.log
+.DS_Store
